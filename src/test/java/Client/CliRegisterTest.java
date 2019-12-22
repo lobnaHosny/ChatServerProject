@@ -47,11 +47,11 @@ class CliRegisterTest {
     }*/
 
     //@Test
-   synchronized Client registerClient(int port){
+   synchronized Client registerClient(int port, String name){
 
-    client = new Client(port);
+       Client client = new Client(port);
         //String input = "IDEN c1" + username;
-        String input = "IDEN c1";
+        String input = "IDEN " + name;
         //.concat(username);
         InputStream i = new ByteArrayInputStream(input.getBytes());
         System.setIn(i);
@@ -62,14 +62,15 @@ class CliRegisterTest {
         //assertTrue(server.doesUserExist("c1"));
     }
 
-   // @Test
+   @Test
     void testRegister(){
+       runServer(9000);
         String[] usernameList = {"abcd", "c1d2e3", "3658", "CLIclient", "ABCD", "NAME", "$home!", "B@r>?e^%"};
 
         for (int i=0; i<usernameList.length; i++){
-           // registerClient(usernameList[i]);
-            int finalI = i;
-            Thread th = new Thread(new Runnable() {
+           registerClient(9000, usernameList[i]);
+            //int finalI = i;
+   /*         Thread th = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     assertTrue(server.doesUserExist(usernameList[finalI]));
@@ -84,6 +85,14 @@ class CliRegisterTest {
 
             th.start();
 
+*/
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            assertTrue(server.doesUserExist(usernameList[i]));
 
         }
 
@@ -142,20 +151,52 @@ class CliRegisterTest {
 
 
     @Test
-    synchronized void usedNames(){
-       runServer(6000);
-       //registerClient(6000);
+    synchronized void usedNames() {
+        runServer(6000);
+        //registerClient(6000);
+//        int j;
+//        String[] userNames = {"myName","oooo"};
+        try {
+            Thread.sleep(600);
+
+        String m = "";
         int j;
-        String[] userNames = {"myName","oooo"};
-        for (j = 0; j<userNames.length; j++){
+        for (j = 0; j < 2; j++) {
             int finalJ = j;
             System.out.println(finalJ);
-            //System.out.println(userNames[finalJ]);
-            Client client = registerClient(6000);
+            //client = registerClient(6000);
+            try {
+                client = registerClient(6000, "myName");
+
+                Thread.sleep(500);
+                m = client.readMessage();
+                /*System.out.println("Registered " + server.getNumberOfUsers());
+                System.out.println("Connected " + server.connectedNumberOfUsers());
+*/
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
 
         }
+    }catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
+        /*try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        *///assertEquals("BAD username is already taken", m);
+        assertEquals(1, server.getNumberOfUsers());
+        assertEquals(2, server.connectedNumberOfUsers());
 
     }
 }
