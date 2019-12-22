@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ServerInitTest {
 
-    Server server; //declaring server
+    /*Server server; //declaring server
 
 
     void runServer(int port){
@@ -54,6 +54,6 @@ class ServerInitTest {
         assertNull(server.server);
 
     }
-
+*/
 
 }
